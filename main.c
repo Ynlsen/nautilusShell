@@ -41,8 +41,8 @@ int main(void) {
 		if (strncmp(cmd, "cd ", 3) == 0) {
 			if (chdir(cmd + 3) != 0) {
 				perror("nautilush");
-				continue;
 			}
+			continue;
 		}
 
 		free(copy);
