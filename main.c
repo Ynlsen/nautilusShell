@@ -9,7 +9,11 @@ int main(void) {
 
 	while (1) {
 		printf("nautilush:%s$ ", getcwd(NULL, 0));
-		getline(&line, &len, stdin);
+		ssize_t count = getline(&line, &len, stdin);
+
+		if (count == -1) {
+			break;
+		}
 
 		pid_t pid = fork();
 		if (pid == 0) {
