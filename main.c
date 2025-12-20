@@ -1,5 +1,7 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -14,6 +16,25 @@ int main(void) {
 		if (count == -1) {
 			break;
 		}
+
+		if (line[count - 1] == '\n') {
+			line[count - 1] = '\0';
+		}
+
+		char *copy = strdup(line);
+		char *cmd = copy;
+
+		while (isspace(*cmd)) {
+			cmd++;
+		}
+
+		size_t length = strlen(cmd);
+		while (length > 0 && isspace(cmd[length - 1])) {
+			cmd[length - 1] = '\0';
+			length--;
+		}
+
+		free(copy);
 
 		pid_t pid = fork();
 		if (pid == 0) {
