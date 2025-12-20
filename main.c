@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 int main(void) {
 	char *line = NULL;
@@ -7,7 +9,13 @@ int main(void) {
 
 	while (1) {
 		getline(&line, &len, stdin);
-		printf(line);
+
+		pid_t pid = fork();
+		if (pid == 0) {
+			execlp("bash", "bash", "-c", line, NULL);
+		} else {
+			wait(&pid);
+		}
 	}
 
 	free(line);
