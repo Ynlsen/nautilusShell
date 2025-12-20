@@ -34,6 +34,10 @@ int main(void) {
 			length--;
 		}
 
+		if (strcmp(cmd, "exit") == 0) {
+			break;
+		}
+
 		free(copy);
 
 		pid_t pid = fork();
