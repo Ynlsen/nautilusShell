@@ -10,16 +10,18 @@ int main(void) {
 	size_t len = 0;
 
 	while (1) {
-		char *cwd = getcwd(NULL, 0);
-		const char *home = getenv("HOME");
+		if (isatty(STDIN_FILENO)) {
+			char *cwd = getcwd(NULL, 0);
+			const char *home = getenv("HOME");
 
-		if (home && strncmp(cwd, home, strlen(home)) == 0) {
-			printf("nautilush:~%s$ ", cwd + strlen(home));
-		} else {
-			printf("nautilush:%s$ ", cwd);
+			if (home && strncmp(cwd, home, strlen(home)) == 0) {
+				printf("nautilush:~%s$ ", cwd + strlen(home));
+			} else {
+				printf("nautilush:%s$ ", cwd);
+			}
+
+			free(cwd);
 		}
-
-		free(cwd);
 
 		const ssize_t count = getline(&line, &len, stdin);
 
