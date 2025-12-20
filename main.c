@@ -8,6 +8,7 @@ int main(void) {
 	size_t len = 0;
 
 	while (1) {
+		printf("nautilush:%s$ ", getcwd(NULL, 0));
 		getline(&line, &len, stdin);
 
 		pid_t pid = fork();
