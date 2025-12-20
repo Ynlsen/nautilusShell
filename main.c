@@ -10,8 +10,18 @@ int main(void) {
 	size_t len = 0;
 
 	while (1) {
-		printf("nautilush:%s$ ", getcwd(NULL, 0));
-		ssize_t count = getline(&line, &len, stdin);
+		char *cwd = getcwd(NULL, 0);
+		const char *home = getenv("HOME");
+
+		if (home && strncmp(cwd, home, strlen(home)) == 0) {
+			printf("nautilush:~%s$ ", cwd + strlen(home));
+		} else {
+			printf("nautilush:%s$ ", cwd);
+		}
+
+		free(cwd);
+
+		const ssize_t count = getline(&line, &len, stdin);
 
 		if (count == -1) {
 			break;
