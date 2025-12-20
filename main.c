@@ -38,6 +38,13 @@ int main(void) {
 			break;
 		}
 
+		if (strncmp(cmd, "cd ", 3) == 0) {
+			if (chdir(cmd + 3) != 0) {
+				perror("nautilush");
+				continue;
+			}
+		}
+
 		free(copy);
 
 		pid_t pid = fork();
