@@ -77,7 +77,8 @@ int main(void) {
 		if (pid == 0) {
 			execlp("bash", "bash", "-c", input, NULL);
 		} else {
-			wait(&pid);
+			int status;
+			waitpid(pid, &status, 0);
 		}
 
 		free(copy);
