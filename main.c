@@ -4,36 +4,48 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
 int main(void) {
-	char *line = NULL;
-	size_t len = 0;
-
 	while (1) {
+		char *input = NULL;
+
 		if (isatty(STDIN_FILENO)) {
 			char *cwd = getcwd(NULL, 0);
 			const char *home = getenv("HOME");
+			char prompt[1024];
 
 			if (home && strncmp(cwd, home, strlen(home)) == 0) {
-				printf("nautilush:~%s$ ", cwd + strlen(home));
+				snprintf(prompt,sizeof(prompt),"nautilush:~%s$ ", cwd + strlen(home));
 			} else {
-				printf("nautilush:%s$ ", cwd);
+				snprintf(prompt, sizeof(prompt),"nautilush:%s$ ", cwd);
 			}
 
 			free(cwd);
+
+			input = readline(prompt);
+			if (!input) {
+				break;
+			}
+			if (*input) {
+				add_history(input);
+			}
+		} else {
+			size_t len = 0;
+			const ssize_t count = getline(&input, &len, stdin);
+
+			if (count == -1) {
+				free(input);
+				break;
+			}
+
+			if (input[count - 1] == '\n') {
+				input[count - 1] = '\0';
+			}
 		}
 
-		const ssize_t count = getline(&line, &len, stdin);
-
-		if (count == -1) {
-			break;
-		}
-
-		if (line[count - 1] == '\n') {
-			line[count - 1] = '\0';
-		}
-
-		char *copy = strdup(line);
+		char *copy = strdup(input);
 		char *cmd = copy;
 
 		while (isspace(*cmd)) {
@@ -47,6 +59,8 @@ int main(void) {
 		}
 
 		if (strcmp(cmd, "exit") == 0) {
+			free(copy);
+			free(input);
 			break;
 		}
 
@@ -54,19 +68,20 @@ int main(void) {
 			if (chdir(cmd + 3) != 0) {
 				perror("nautilush");
 			}
+			free(copy);
+			free(input);
 			continue;
 		}
 
-		free(copy);
-
 		pid_t pid = fork();
 		if (pid == 0) {
-			execlp("bash", "bash", "-c", line, NULL);
+			execlp("bash", "bash", "-c", input, NULL);
 		} else {
 			wait(&pid);
 		}
-	}
 
-	free(line);
+		free(copy);
+		free(input);
+	}
 	return 0;
 }
