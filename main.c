@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <limits.h>
 
 int main(void) {
 	while (1) {
@@ -14,7 +15,7 @@ int main(void) {
 		if (isatty(STDIN_FILENO)) {
 			char *cwd = getcwd(NULL, 0);
 			const char *home = getenv("HOME");
-			char prompt[1024];
+			char prompt[PATH_MAX];
 
 			if (home && strncmp(cwd, home, strlen(home)) == 0) {
 				snprintf(prompt,sizeof(prompt),"nautilush:~%s$ ", cwd + strlen(home));
