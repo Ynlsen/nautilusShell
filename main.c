@@ -48,12 +48,12 @@ int main(void) {
 		char *copy = strdup(input);
 		char *cmd = copy;
 
-		while (isspace(*cmd)) {
+		while (isspace((unsigned char)*cmd)) {
 			cmd++;
 		}
 
 		size_t length = strlen(cmd);
-		while (length > 0 && isspace(cmd[length - 1])) {
+		while (length > 0 && isspace((unsigned char)cmd[length - 1])) {
 			cmd[length - 1] = '\0';
 			length--;
 		}
