@@ -17,10 +17,14 @@ int main(void) {
 			const char *home = getenv("HOME");
 			char prompt[PATH_MAX + 13];  // Length of "nautilush:~$ " is 13
 
-			if (home && strncmp(cwd, home, strlen(home)) == 0) {
-				snprintf(prompt,sizeof(prompt),"nautilush:~%s$ ", cwd + strlen(home));
+			if (cwd != NULL) {
+				if (home && strncmp(cwd, home, strlen(home)) == 0) {
+					snprintf(prompt,sizeof(prompt),"nautilush:~%s$ ", cwd + strlen(home));
+				} else {
+					snprintf(prompt, sizeof(prompt),"nautilush:%s$ ", cwd);
+				}
 			} else {
-				snprintf(prompt, sizeof(prompt),"nautilush:%s$ ", cwd);
+				snprintf(prompt, sizeof(prompt), "nautilush:$ ");
 			}
 
 			free(cwd);
