@@ -62,6 +62,11 @@ int main(void) {
 			length--;
 		}
 
+		if (*cmd == '\0') {
+			free(input);
+			continue;
+		}
+
 		if (strcmp(cmd, "exit") == 0) {
 			free(input);
 			break;
