@@ -7,6 +7,14 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <limits.h>
+#include <signal.h>
+
+void sigint_handler(int sig) {
+	write(STDOUT_FILENO, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+}
 
 int main(int argc, char **argv) {
 	for (int i = 1; i < argc; i++) {
@@ -16,6 +24,7 @@ int main(int argc, char **argv) {
 			_exit(EXIT_FAILURE);
 		}
 	}
+	signal(SIGINT, sigint_handler);
 	while (1) {
 		char *input = NULL;
 		size_t len = 0;
@@ -104,12 +113,21 @@ int main(int argc, char **argv) {
 		if (pid == -1) {
 			perror("nautilush: fork failed");
 		} else if (pid == 0) {
+			signal(SIGINT, SIG_DFL);
+
 			execlp("bash", "bash", "-c", input, NULL);
 			perror("nautilush: exec failed");
 			_exit(EXIT_FAILURE);
 		} else {
+			signal(SIGINT, SIG_IGN);
+
 			int status;
 			waitpid(pid, &status, 0);
+			
+			signal(SIGINT, sigint_handler);
+			if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) {
+				write(STDOUT_FILENO, "\n", 1);
+			}
 		}
 
 		free(input);
