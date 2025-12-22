@@ -25,6 +25,8 @@ int main(int argc, char **argv) {
 		}
 	}
 	signal(SIGINT, sigint_handler);
+	signal(SIGTSTP, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	while (1) {
 		char *input = NULL;
 		size_t len = 0;
@@ -114,6 +116,8 @@ int main(int argc, char **argv) {
 			perror("nautilush: fork failed");
 		} else if (pid == 0) {
 			signal(SIGINT, SIG_DFL);
+			signal(SIGTSTP, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
 
 			execlp("bash", "bash", "-c", input, NULL);
 			perror("nautilush: exec failed");
@@ -122,10 +126,10 @@ int main(int argc, char **argv) {
 			signal(SIGINT, SIG_IGN);
 
 			int status;
-			waitpid(pid, &status, 0);
+			waitpid(pid, &status, WUNTRACED);
 			
 			signal(SIGINT, sigint_handler);
-			if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) {
+			if ((WIFSIGNALED(status) && (WTERMSIG(status) == SIGINT || WTERMSIG(status) == SIGQUIT)) || WIFSTOPPED(status)) {
 				write(STDOUT_FILENO, "\n", 1);
 			}
 		}
