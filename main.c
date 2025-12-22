@@ -68,7 +68,11 @@ int main(void) {
 		}
 
 		if (strncmp(cmd, "cd ", 3) == 0) {
-			if (chdir(cmd + 3) != 0) {
+			cmd += 3;
+			while (isspace((unsigned char)*cmd)) {
+				cmd++;
+			}
+			if (chdir(cmd) != 0) {
 				perror("nautilush");
 			}
 			free(input);
@@ -76,7 +80,8 @@ int main(void) {
 		}
 
 		if (strcmp(cmd, "cd") == 0) {
-			if (chdir(getenv("HOME")) != 0) {
+			const char *home = getenv("HOME");
+			if (home && chdir(home) != 0) {
 				perror("nautilush");
 			}
 			free(input);
