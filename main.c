@@ -11,6 +11,7 @@
 int main(void) {
 	while (1) {
 		char *input = NULL;
+		size_t len = 0;
 
 		if (isatty(STDIN_FILENO)) {
 			char *cwd = getcwd(NULL, 0);
@@ -37,7 +38,6 @@ int main(void) {
 				add_history(input);
 			}
 		} else {
-			size_t len = 0;
 			const ssize_t count = getline(&input, &len, stdin);
 
 			if (count == -1) {
@@ -56,10 +56,10 @@ int main(void) {
 			cmd++;
 		}
 
-		size_t length = strlen(cmd);
-		while (length > 0 && isspace((unsigned char)cmd[length - 1])) {
-			cmd[length - 1] = '\0';
-			length--;
+		len = strlen(cmd);
+		while (len > 0 && isspace((unsigned char)cmd[len - 1])) {
+			cmd[len - 1] = '\0';
+			len--;
 		}
 
 		if (*cmd == '\0') {
