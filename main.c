@@ -15,7 +15,7 @@ int main(void) {
 		if (isatty(STDIN_FILENO)) {
 			char *cwd = getcwd(NULL, 0);
 			const char *home = getenv("HOME");
-			char prompt[PATH_MAX];
+			char prompt[PATH_MAX + 13];  // Length of "nautilush:~$ " is 13
 
 			if (home && strncmp(cwd, home, strlen(home)) == 0) {
 				snprintf(prompt,sizeof(prompt),"nautilush:~%s$ ", cwd + strlen(home));
