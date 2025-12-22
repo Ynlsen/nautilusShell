@@ -8,7 +8,14 @@
 #include <readline/history.h>
 #include <limits.h>
 
-int main(void) {
+int main(int argc, char **argv) {
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "-c") == 0 && i + 1 < argc) {
+			execlp("sh", "sh", "-c", argv[i+1], NULL);
+			perror("nautilush: exec failed");
+			_exit(EXIT_FAILURE);
+		}
+	}
 	while (1) {
 		char *input = NULL;
 		size_t len = 0;
