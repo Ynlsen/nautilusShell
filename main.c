@@ -75,6 +75,14 @@ int main(void) {
 			continue;
 		}
 
+		if (strcmp(cmd, "cd") == 0) {
+			if (chdir(getenv("HOME")) != 0) {
+				perror("nautilush");
+			}
+			free(input);
+			continue;
+		}
+
 		pid_t pid = fork();
 		if (pid == 0) {
 			execlp("bash", "bash", "-c", input, NULL);
