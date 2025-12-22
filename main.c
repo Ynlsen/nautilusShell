@@ -50,8 +50,7 @@ int main(void) {
 			}
 		}
 
-		char *copy = strdup(input);
-		char *cmd = copy;
+		char *cmd = input;
 
 		while (isspace((unsigned char)*cmd)) {
 			cmd++;
@@ -64,7 +63,6 @@ int main(void) {
 		}
 
 		if (strcmp(cmd, "exit") == 0) {
-			free(copy);
 			free(input);
 			break;
 		}
@@ -73,7 +71,6 @@ int main(void) {
 			if (chdir(cmd + 3) != 0) {
 				perror("nautilush");
 			}
-			free(copy);
 			free(input);
 			continue;
 		}
@@ -86,7 +83,6 @@ int main(void) {
 			waitpid(pid, &status, 0);
 		}
 
-		free(copy);
 		free(input);
 	}
 	return 0;
