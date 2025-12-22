@@ -86,6 +86,8 @@ int main(void) {
 		pid_t pid = fork();
 		if (pid == 0) {
 			execlp("bash", "bash", "-c", input, NULL);
+			perror("nautilush: exec failed");
+			_exit(EXIT_FAILURE);
 		} else {
 			int status;
 			waitpid(pid, &status, 0);
@@ -93,5 +95,5 @@ int main(void) {
 
 		free(input);
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }
