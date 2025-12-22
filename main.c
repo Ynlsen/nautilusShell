@@ -94,7 +94,9 @@ int main(void) {
 		}
 
 		pid_t pid = fork();
-		if (pid == 0) {
+		if (pid == -1) {
+			perror("nautilush: fork failed");
+		} else if (pid == 0) {
 			execlp("bash", "bash", "-c", input, NULL);
 			perror("nautilush: exec failed");
 			_exit(EXIT_FAILURE);
