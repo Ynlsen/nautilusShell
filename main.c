@@ -142,8 +142,19 @@ int main(int argc, char **argv) {
 			}
 
 			signal(SIGINT, sigint_handler);
-			if ((WIFSIGNALED(status) && (WTERMSIG(status) == SIGINT || WTERMSIG(status) == SIGQUIT)) || WIFSTOPPED(status)) {
-				write(STDOUT_FILENO, "\n", 1);
+			if (WIFSIGNALED(status)) {
+				if (WTERMSIG(status) == SIGINT) {
+					write(STDOUT_FILENO, "\n", 1);
+				} else {
+					if (WCOREDUMP(status)) {
+						printf("%s                       (core dumped) %s\n", strsignal(WTERMSIG(status)), input);
+					} else {
+						printf("%s                                     %s\n", strsignal(WTERMSIG(status)), input);
+					}
+				}
+			} else if (WIFSTOPPED(status)) {
+				// [?] because bash has job numbers, nautilush does not
+				printf("\n[?]+  Stopped                    %s\n", input);
 			}
 		}
 
